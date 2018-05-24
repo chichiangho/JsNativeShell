@@ -47,41 +47,37 @@ let app = {
         JsNativeInterface.setTitleBar("{rightButtons:[],titleType:\"normal\",hideTitleAndStatus:false,title:\"SetTitleSuccess\",titlePosition:\"left\",leftText:\"hide\",leftIcon:\"hide\",titleColor:\"#ff0000\",titleBarColor:\"#bbccff\"}");
     },
     closeTitle: function () {
-//        cordova.exec(function(winParam) {},
-//                 function(error) {},
-//                 "PageManagerPlugin",
-//                 "closeTitleSpinner",
-//                 [{"title":"SetTitleSuccess","titlePosition":"left","leftText":"hide","leftIcon":"hide","titleColor":"#ff0000","titleBarColor":"#bbccff"}]);
+        JsNativeInterface.setTitleBar("{titleSpinnerOpen:false}");
     },
     hideTitle: function () {
-//          cordova.exec(function(winParam) {},
-//                   function(error) {},
-//                   "PageManagerPlugin",
-//                   "setTitleBar",
-//                    [{title:"SetTitleSuccess",hideTitleAndStatus:true}] );
+        JsNativeInterface.setTitleBar("{hideTitleAndStatus:true}");
     },
     setOperator: function () {
-        JsNativeInterface.setTitleBar("{rightButtons:[{img:\"\",text:\"Set\",callback:\"app.setTitle();\"},{img:\"\",text:\"Get\",subMenu:[{text:\"333\",callback:\"alert(\\\"333\\\");\"},{text:\"444\",callback:\"alert(\\\"444\\\");\"}]}]}");
+        JsNativeInterface.setTitleBar("{rightButtons:[{img:\"\",text:\"Set\",subMenu:[{text:\"111\",callback:\"alert(\\\"111\\\");\"},{text:\"222\",callback:\"alert(\\\"222\\\");\"}],callback:\"app.setTitle();\"},{img:\"\",text:\"Get\",subMenu:[{text:\"333\",callback:\"alert(\\\"333\\\");\"},{text:\"444\",callback:\"alert(\\\"444\\\");\"}]}]}");
     },
     setSwipeAble: function () {
-        JsNativeInterface.setSwipeCloseAble(true);
+        JsNativeInterface.setSwipeAble(true);
     },
     setUnSwipeAble: function () {
-        JsNativeInterface.setSwipeCloseAble(false);
+        JsNativeInterface.setSwipeAble(false);
     },
     goBack2: function () {
-//                     cordova.exec(function(winParam) {},
-//                              function(error) {},
-//                              "PageManagerPlugin",
-//                              "backHistory",
-//                              [2]);
+        JsNativeInterface.backHistory(2);
     },
     goBack3: function () {
-//                                      cordova.exec(function(winParam) {},
-//                                               function(error) {},
-//                                               "PageManagerPlugin",
-//                                               "backHistory",
-//                                               [3]);
+        JsNativeInterface.backHistory(3);
+    },
+    remove0: function () {
+        JsNativeInterface.removeRightButtonByIndex("{index:0}");
+    },
+    change0: function () {
+        JsNativeInterface.setRightButtonByIndex("{index:0,button:{text:\"change\"}}");
+    },
+    remove00: function () {
+        JsNativeInterface.removeRightButtonByIndex("{index:0,subIndex:0}");
+    },
+    change00: function () {
+        JsNativeInterface.setRightButtonByIndex("{index:0,subIndex:0,button:{text:\"change\"}}");
     }
 };
 

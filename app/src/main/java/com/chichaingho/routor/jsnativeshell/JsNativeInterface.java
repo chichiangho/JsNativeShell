@@ -62,7 +62,9 @@ public class JsNativeInterface {
         if (activity == null)
             return;
 
-        final ActionLoadUrl info = gson.fromJson(infoStr.toString(), ActionLoadUrl.class);
+        final ActionLoadUrl info = gson.fromJson(infoStr, ActionLoadUrl.class);
+        if (info == null)
+            return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -85,6 +87,8 @@ public class JsNativeInterface {
         if (activity == null)
             return;
         final TitleBarInfo info = gson.fromJson(infoStr, TitleBarInfo.class);
+        if (info == null)
+            return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -94,7 +98,7 @@ public class JsNativeInterface {
     }
 
     @JavascriptInterface
-    public void setSwipeCloseAble(final boolean swipeCloseAble) {
+    public void setSwipeAble(final boolean swipeCloseAble) {
         final BaseActionBarCordovaActivity activity = softActivity.get();
         if (activity == null)
             return;
@@ -121,11 +125,13 @@ public class JsNativeInterface {
     }
 
     @JavascriptInterface
-    public void goBack(String infoStr) {
+    public void backHistory(String infoStr) {
         final BaseActionBarCordovaActivity activity = softActivity.get();
         if (activity == null)
             return;
         final ActionGoBack info = gson.fromJson(infoStr, ActionGoBack.class);
+        if (info == null)
+            return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -140,6 +146,8 @@ public class JsNativeInterface {
         if (activity == null)
             return;
         final ActionSetOnBackListener info = gson.fromJson(infoStr, ActionSetOnBackListener.class);
+        if (info == null)
+            return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -154,6 +162,8 @@ public class JsNativeInterface {
         if (activity == null)
             return;
         final ActionSetRightButtonByIndex info = gson.fromJson(infoStr, ActionSetRightButtonByIndex.class);
+        if (info == null)
+            return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -168,6 +178,8 @@ public class JsNativeInterface {
         if (activity == null)
             return;
         final RightButtonIndex info = gson.fromJson(infoStr, RightButtonIndex.class);
+        if (info == null)
+            return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

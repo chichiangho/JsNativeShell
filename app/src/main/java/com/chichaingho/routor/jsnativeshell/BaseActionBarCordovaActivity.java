@@ -522,7 +522,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             setRightButtons(titleBarInfo.rightButtons);
     }
 
-    private void changeSpinner(boolean toOpen) {
+    protected void changeSpinner(boolean toOpen) {
         ValueAnimator animator;
         if (toOpen && titleSpinner.getRotation() == 0) {
             animator = ValueAnimator.ofInt(0, 180);
