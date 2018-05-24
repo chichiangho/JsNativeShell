@@ -130,7 +130,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             @Override
             public void onPageLoadStarted(XWalkView view, String url) {
                 super.onPageLoadStarted(view, url);
-                jsNativeInterface.execJs("jsNativeEvent.performOnLoadStarted();", pages.lastElement().params);
+                jsNativeInterface.execJs(pages.lastElement().onLoadStartedCallback, pages.lastElement().params);
 
                 if (showProgress) {
                     progress.setVisibility(View.VISIBLE);
@@ -163,7 +163,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             @Override
             public void onPageLoadStopped(XWalkView view, String url, LoadStatus status) {
                 super.onPageLoadStopped(view, url, status);
-                jsNativeInterface.execJs("jsNativeEvent.performOnLoadFinished();", pages.lastElement().params);
+                jsNativeInterface.execJs(pages.lastElement().onLoadStoppedCallback, pages.lastElement().params);
 
                 if (showProgress) {
                     progressTimer.schedule(new TimerTask() {
@@ -277,16 +277,15 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                     TitleBarInfo info = pages.lastElement().titleBarInfo;
                     info.titleSpinnerOpen = false;
                     setTitleBar(info);
-                    if (pages.lastElement().onResultCallback != null)// 是否需要延时？如果页面未重新加载，应该是不需要延时
-                        jsNativeInterface.execJs(pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
+
+                    jsNativeInterface.execJs(pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
                 } else {
                     intent.putExtra("backCount", backCount + 1 - pages.size());
                     setResult(RESULT_OK, intent);
                     finish();
                 }
             } else {//已回到了目标页
-                if (pages.lastElement().onResultCallback != null)
-                    jsNativeInterface.execJs(pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
+                jsNativeInterface.execJs(pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
             }
         }
     }
@@ -408,9 +407,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                 titleEtBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!titleEt.getText().toString().isEmpty() && titleBarInfo.titleCallback != null) {
-                            jsNativeInterface.execJs(titleBarInfo.titleCallback, titleEt.getText().toString());
-                        }
+                        jsNativeInterface.execJs(titleBarInfo.titleCallback, titleEt.getText().toString());
                     }
                 });
                 if (titleBarInfo.searchTextColor != null) {
@@ -477,12 +474,9 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                 titleNormalContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String callback = titleBarInfo.titleCallback;
-                        if (callback != null && !callback.equals("")) {
-                            jsNativeInterface.execJs(callback);
-                            if (titleBarInfo.titleType.equals(TYPE_WITH_SPINNER))
-                                changeSpinner(!(titleBarInfo.titleSpinnerOpen != null && titleBarInfo.titleSpinnerOpen));
-                        }
+                        jsNativeInterface.execJs(titleBarInfo.titleCallback);
+                        if (titleBarInfo.titleType.equals(TYPE_WITH_SPINNER))
+                            changeSpinner(!(titleBarInfo.titleSpinnerOpen != null && titleBarInfo.titleSpinnerOpen));
                     }
                 });
                 if ("left".equals(titleBarInfo.titlePosition)) {
@@ -609,9 +603,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                     if (operatorInfo.subMenu != null) {
                         showPopWindow(v, index, operatorInfo.subMenu);
                     } else {
-                        if (operatorInfo.callback != null && !operatorInfo.callback.equals("")) {
-                            jsNativeInterface.execJs(operatorInfo.callback);
-                        }
+                        jsNativeInterface.execJs(operatorInfo.callback);
                     }
                 }
             });
@@ -694,10 +686,6 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         setRightButtons(pages.lastElement().titleBarInfo.rightButtons);
     }
 
-    public void setOnBackListener(String onResultCallback) {
-        pages.lastElement().onResultCallback = onResultCallback;
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -771,9 +759,8 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String callback = subButtons.get(holder.getAdapterPosition()).callback;
-                    if (callback != null && !callback.equals("") && jsNativeInterface != null) {
-                        jsNativeInterface.execJs(callback);
+                    if (jsNativeInterface != null) {
+                        jsNativeInterface.execJs(subButtons.get(holder.getAdapterPosition()).callback);
                     }
                     menu.dismiss();
                 }

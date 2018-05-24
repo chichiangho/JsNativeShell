@@ -22,8 +22,11 @@ let app = {
     initialize: function () {
 //        JsNativeInterface.setShowProgress(false);
         jsNativeEvent.onLoadFinished(function (params) {
-            alert(params);
+             alert(params);
         });
+        jsNativeEvent.onHistoryBack(function (params) {
+            alert(params);
+        })
     },
     startNext: function () {
         JsNativeInterface.loadUrl("{url:\"file:///android_asset/www/index.html\",params:\"in params\",titleInfo:\"{title:\\\"Load In WebView\\\"}\",inCurPage:true}");
@@ -62,10 +65,10 @@ let app = {
         JsNativeInterface.setSwipeAble(false);
     },
     goBack2: function () {
-        JsNativeInterface.backHistory(2);
+        JsNativeInterface.backHistory("{backCount:2}");
     },
     goBack3: function () {
-        JsNativeInterface.backHistory(3);
+        JsNativeInterface.backHistory("{backCount:3}");
     },
     remove0: function () {
         JsNativeInterface.removeRightButtonByIndex("{index:0}");

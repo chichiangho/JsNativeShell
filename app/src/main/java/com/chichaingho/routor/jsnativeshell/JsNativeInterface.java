@@ -29,6 +29,8 @@ public class JsNativeInterface {
     }
 
     public void execJs(String method, String param) {
+        if (method == null || method.equals(""))
+            return;
         final BaseActionBarCordovaActivity activity = softActivity.get();
         if (activity == null)
             return;
@@ -141,17 +143,46 @@ public class JsNativeInterface {
     }
 
     @JavascriptInterface
-    public void setOnBackListener(String infoStr) {
+    public void setOnBackListener(final String info) {
+        if (info == null)
+            return;
         final BaseActionBarCordovaActivity activity = softActivity.get();
         if (activity == null)
-            return;
-        final ActionSetOnBackListener info = gson.fromJson(infoStr, ActionSetOnBackListener.class);
-        if (info == null)
             return;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                activity.setOnBackListener(info.onResultCallback);
+                activity.pages.lastElement().onResultCallback = info;
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void setOnLoadStartedListener(final String info) {
+        if (info == null)
+            return;
+        final BaseActionBarCordovaActivity activity = softActivity.get();
+        if (activity == null)
+            return;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.pages.lastElement().onLoadStartedCallback = info;
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void setOnLoadStoppedListener(final String info) {
+        if (info == null)
+            return;
+        final BaseActionBarCordovaActivity activity = softActivity.get();
+        if (activity == null)
+            return;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.pages.lastElement().onLoadStoppedCallback = info;
             }
         });
     }
