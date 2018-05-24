@@ -24,11 +24,14 @@ public class JsNativeInterface {
         softActivity = new SoftReference<>(activity);
     }
 
-    public static void execJs(BaseActionBarCordovaActivity activity, String method) {
-        execJs(activity, method, null);
+    public void execJs(String method) {
+        execJs(method, null);
     }
 
-    public static void execJs(final BaseActionBarCordovaActivity activity, String method, String param) {
+    public void execJs(String method, String param) {
+        final BaseActionBarCordovaActivity activity = softActivity.get();
+        if (activity == null)
+            return;
         if (!activity.isXWalkReady())
             return;
         String callback = method;
@@ -59,7 +62,7 @@ public class JsNativeInterface {
         if (activity == null)
             return;
 
-        final ActionLoadUrl info = gson.fromJson(infoStr, ActionLoadUrl.class);
+        final ActionLoadUrl info = gson.fromJson(infoStr.toString(), ActionLoadUrl.class);
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -91,14 +94,6 @@ public class JsNativeInterface {
     }
 
     @JavascriptInterface
-    public String getParams(String infoStr) {
-        final BaseActionBarCordovaActivity activity = softActivity.get();
-        if (activity == null)
-            return "";
-        return activity.pages.lastElement().params == null ? "" : activity.pages.lastElement().params;
-    }
-
-    @JavascriptInterface
     public void setSwipeCloseAble(final boolean swipeCloseAble) {
         final BaseActionBarCordovaActivity activity = softActivity.get();
         if (activity == null)
@@ -110,6 +105,19 @@ public class JsNativeInterface {
                     ((SwipeCloseActionBarCordovaActivity) activity).setSwipeAble(swipeCloseAble);
                 }
             });
+    }
+
+    @JavascriptInterface
+    public void setShowProgress(final boolean showProgress) {
+        final BaseActionBarCordovaActivity activity = softActivity.get();
+        if (activity == null)
+            return;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.setShowProgress(showProgress);
+            }
+        });
     }
 
     @JavascriptInterface

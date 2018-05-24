@@ -39,7 +39,6 @@ import org.xwalk.core.XWalkActivityDelegate;
 import org.xwalk.core.XWalkUIClient;
 import org.xwalk.core.XWalkView;
 
-import java.lang.ref.SoftReference;
 import java.util.List;
 import java.util.Stack;
 import java.util.Timer;
@@ -71,6 +70,9 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
     private ImageView titleEtBtn;
     protected XWalkActivityDelegate activityDelegate;
     protected XWalkView webView;
+    private boolean showProgress = true;
+    private float curProgress;
+    private JsNativeInterface jsNativeInterface;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,47 +124,66 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         leftIcon = findViewById(R.id.left_icon);
 
         webView.clearCache(false);
-        webView.addJavascriptInterface(new JsNativeInterface(this), "JsNativeInterface");
+        jsNativeInterface = new JsNativeInterface(this);
+        webView.addJavascriptInterface(jsNativeInterface, "JsNativeInterface");
         webView.setUIClient(new XWalkUIClient(webView) {
             @Override
             public void onPageLoadStarted(XWalkView view, String url) {
                 super.onPageLoadStarted(view, url);
-                progress.setVisibility(View.VISIBLE);
-                progressTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        curProgress += curProgress > 50 ? (curProgress > 75 ? 0.4 : 0.7) : 1;
-                        if (curProgress >= 100) {
-                            cancel();
+                jsNativeInterface.execJs("jsNativeEvent.performOnLoadStarted();", pages.lastElement().params);
+
+                if (showProgress) {
+                    progress.setVisibility(View.VISIBLE);
+                    progressTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (!showProgress) {
+                                curProgress = 0;
+                                cancel();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progress.setVisibility(View.GONE);
+                                    }
+                                });
+                            }
+                            curProgress += curProgress > 50 ? (curProgress > 75 ? 0.4 : 0.7) : 1;
+                            if (curProgress >= 100) {
+                                cancel();
+                            }
+                            if (Build.VERSION.SDK_INT >= 24)//setProgress 做了线程同步处理，不存在UI线程问题
+                                progress.setProgress((int) curProgress, true);
+                            else
+                                progress.setProgress((int) curProgress);
                         }
-                        if (Build.VERSION.SDK_INT >= 24)//setProgress 做了线程同步处理，不存在UI线程问题
-                            progress.setProgress((int) curProgress, true);
-                        else
-                            progress.setProgress((int) curProgress);
-                    }
-                }, 50, 50);
+                    }, 50, 50);
+                }
             }
 
             @Override
             public void onPageLoadStopped(XWalkView view, String url, LoadStatus status) {
                 super.onPageLoadStopped(view, url, status);
-                progressTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        curProgress += 5;
-                        if (curProgress >= 100) {
-                            curProgress = 0;
-                            cancel();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progress.setVisibility(View.GONE);
-                                }
-                            });
+                jsNativeInterface.execJs("jsNativeEvent.performOnLoadFinished();", pages.lastElement().params);
+
+                if (showProgress) {
+                    progressTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            curProgress += 5;
+                            if (!showProgress || curProgress >= 100) {
+                                curProgress = 0;
+                                cancel();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progress.setVisibility(View.GONE);
+                                    }
+                                });
+                            }
+                            progress.setProgress((int) curProgress);
                         }
-                        progress.setProgress((int) curProgress);
-                    }
-                }, 10, 10);
+                    }, 10, 10);
+                }
             }
         });
     }
@@ -223,11 +244,9 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         if (callback == null || callback.equals("")) {
             goBack(1, null);
         } else {
-            JsNativeInterface.execJs(this, callback);
+            jsNativeInterface.execJs(callback);
         }
     }
-
-    private float curProgress;
 
     public void goBack(final int backCount, final String backParams) {
         Intent intent = new Intent();
@@ -259,7 +278,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                     info.titleSpinnerOpen = false;
                     setTitleBar(info);
                     if (pages.lastElement().onResultCallback != null)// 是否需要延时？如果页面未重新加载，应该是不需要延时
-                        JsNativeInterface.execJs(this, pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
+                        jsNativeInterface.execJs(pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
                 } else {
                     intent.putExtra("backCount", backCount + 1 - pages.size());
                     setResult(RESULT_OK, intent);
@@ -267,7 +286,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                 }
             } else {//已回到了目标页
                 if (pages.lastElement().onResultCallback != null)
-                    JsNativeInterface.execJs(this, pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
+                    jsNativeInterface.execJs(pages.lastElement().onResultCallback, intent.getStringExtra("backParams"));
             }
         }
     }
@@ -390,7 +409,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         if (!titleEt.getText().toString().isEmpty() && titleBarInfo.titleCallback != null) {
-                            JsNativeInterface.execJs(BaseActionBarCordovaActivity.this, titleBarInfo.titleCallback, titleEt.getText().toString());
+                            jsNativeInterface.execJs(titleBarInfo.titleCallback, titleEt.getText().toString());
                         }
                     }
                 });
@@ -460,7 +479,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         String callback = titleBarInfo.titleCallback;
                         if (callback != null && !callback.equals("")) {
-                            JsNativeInterface.execJs(BaseActionBarCordovaActivity.this, callback);
+                            jsNativeInterface.execJs(callback);
                             if (titleBarInfo.titleType.equals(TYPE_WITH_SPINNER))
                                 changeSpinner(!(titleBarInfo.titleSpinnerOpen != null && titleBarInfo.titleSpinnerOpen));
                         }
@@ -591,7 +610,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                         showPopWindow(v, index, operatorInfo.subMenu);
                     } else {
                         if (operatorInfo.callback != null && !operatorInfo.callback.equals("")) {
-                            JsNativeInterface.execJs(BaseActionBarCordovaActivity.this, operatorInfo.callback);
+                            jsNativeInterface.execJs(operatorInfo.callback);
                         }
                     }
                 }
@@ -610,10 +629,10 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             }
             recyclerView = (RecyclerView) menu.getContentView();
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new MenuAdapter(this, menu, parentIndex, operator));
+            recyclerView.setAdapter(new MenuAdapter(jsNativeInterface, menu, operator));
         } else {
             recyclerView = (RecyclerView) menu.getContentView();
-            ((MenuAdapter) recyclerView.getAdapter()).setData(parentIndex, operator);
+            ((MenuAdapter) recyclerView.getAdapter()).setData(operator);
         }
         if (pages.lastElement().titleBarInfo.titleBarColor != null)
             recyclerView.setBackgroundColor(Color.parseColor(pages.lastElement().titleBarInfo.titleBarColor));
@@ -703,16 +722,19 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         }
     }
 
-    static class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private final SoftReference<BaseActionBarCordovaActivity> activity;
-        PopupWindow menu;
-        int parentIndex;
-        List<TitleBarInfo.SubRightButtonInfo> subButtons;
+    public void setShowProgress(boolean showProgress) {
+        this.showProgress = showProgress;
+        progress.setVisibility(showProgress ? View.VISIBLE : View.GONE);
+    }
 
-        MenuAdapter(BaseActionBarCordovaActivity activity, PopupWindow menu, int parentIndex, List<TitleBarInfo.SubRightButtonInfo> subButtons) {
-            this.activity = new SoftReference<>(activity);
+    static class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private JsNativeInterface jsNativeInterface;
+        private PopupWindow menu;
+        private List<TitleBarInfo.SubRightButtonInfo> subButtons;
+
+        MenuAdapter(JsNativeInterface jsNativeInterface, PopupWindow menu, List<TitleBarInfo.SubRightButtonInfo> subButtons) {
+            this.jsNativeInterface = jsNativeInterface;
             this.menu = menu;
-            this.parentIndex = parentIndex;
             this.subButtons = subButtons;
         }
 
@@ -750,8 +772,8 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     String callback = subButtons.get(holder.getAdapterPosition()).callback;
-                    if (callback != null && !callback.equals("") && activity.get() != null) {
-                        JsNativeInterface.execJs(activity.get(), callback);
+                    if (callback != null && !callback.equals("") && jsNativeInterface != null) {
+                        jsNativeInterface.execJs(callback);
                     }
                     menu.dismiss();
                 }
@@ -763,8 +785,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             return subButtons.size();
         }
 
-        void setData(int parentIndex, List<TitleBarInfo.SubRightButtonInfo> operator) {
-            this.parentIndex = parentIndex;
+        void setData(List<TitleBarInfo.SubRightButtonInfo> operator) {
             this.subButtons = operator;
             notifyDataSetChanged();
         }

@@ -27,5 +27,6 @@
         android:max="100"
         android:progress="0"
         android:progressDrawable="@drawable/progressbar"
-        android:secondaryProgress="0" />
+        android:secondaryProgress="0"
+        android:visibility="gone" />
 </RelativeLayout>
