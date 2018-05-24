@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="actionbar_height">55dp</dimen>
+    <dimen name="swipecloseactivity_shadow_width">15dp</dimen>
+    <dimen name="limitedslidingpanelayout_max_slide_width">50dp</dimen>
+</resources>
