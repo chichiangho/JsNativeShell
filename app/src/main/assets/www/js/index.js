@@ -121,6 +121,9 @@ let app = {
     },
     change00: function () {
         jsNativeBridge.setRightButtonByIndex({index: 0, subIndex: 0, button: {text: "change"}});
+    },
+    addOpe: function () {
+        jsNativeBridge.addRightButton({text: "added"});
     }
 };
 

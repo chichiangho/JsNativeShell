@@ -39,6 +39,7 @@ import org.xwalk.core.XWalkActivityDelegate;
 import org.xwalk.core.XWalkUIClient;
 import org.xwalk.core.XWalkView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.Timer;
@@ -211,18 +212,18 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
                 activityDelegate = new XWalkActivityDelegate(this, null, new Runnable() {
                     @Override
                     public void run() {
-                        webView.load(url, null);
+                        webView.loadUrl(url);
                     }
                 });
                 activityDelegate.onResume();
             } else {
-                webView.load(url, null);
+                webView.loadUrl(url);
             }
         } else {
             activityDelegate = new XWalkActivityDelegate(this, null, new Runnable() {
                 @Override
                 public void run() {
-                    webView.load(url, null);
+                    webView.loadUrl(url);
                 }
             });
             activityDelegate.onResume();
@@ -645,8 +646,12 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
     }
 
     public void setRightButtonByIndex(ActionSetRightButtonByIndex action) {
+        TitleBarInfo titleBarInfo = pages.lastElement().titleBarInfo;
+        if (titleBarInfo.rightButtons == null || action.index == null || action.index < 0 || action.index >= titleBarInfo.rightButtons.size())
+            return;
+
         if (action.subIndex == null) {
-            TitleBarInfo.RightButtonInfo cur = pages.lastElement().titleBarInfo.rightButtons.get(action.index);
+            TitleBarInfo.RightButtonInfo cur = titleBarInfo.rightButtons.get(action.index);
             if (action.button.callback != null)
                 cur.callback = action.button.callback;
             if (action.button.text != null)
@@ -660,7 +665,15 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
             if (action.button.subMenu != null)
                 cur.subMenu = action.button.subMenu;
         } else {
-            TitleBarInfo.SubRightButtonInfo cur = pages.lastElement().titleBarInfo.rightButtons.get(action.index).subMenu.get(action.index);
+            List<TitleBarInfo.SubRightButtonInfo> sub = titleBarInfo.rightButtons.get(action.index).subMenu;
+            if (sub == null)
+                return;
+
+            TitleBarInfo.SubRightButtonInfo cur = sub.get(action.index);
+
+            if (action.subIndex < 0 || action.subIndex >= titleBarInfo.rightButtons.get(action.index).subMenu.size())
+                return;
+
             if (action.button.callback != null)
                 cur.callback = action.button.callback;
             if (action.button.text != null)
@@ -676,14 +689,32 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
     }
 
     public void removeRightButtonByIndex(RightButtonIndex action) {
-        if (action.index == null)
+        TitleBarInfo titleBarInfo = pages.lastElement().titleBarInfo;
+
+        if (titleBarInfo.rightButtons == null ||
+                action.index == null || action.index < 0 || action.index >= titleBarInfo.rightButtons.size())
             return;
+
         if (action.subIndex == null) {
-            pages.lastElement().titleBarInfo.rightButtons.remove((int) action.index);
+            titleBarInfo.rightButtons.remove((int) action.index);
         } else {
-            pages.lastElement().titleBarInfo.rightButtons.get(action.index).subMenu.remove((int) action.subIndex);
+            List<TitleBarInfo.SubRightButtonInfo> sub = titleBarInfo.rightButtons.get(action.index).subMenu;
+            if (sub == null || action.subIndex < 0 || action.subIndex >= sub.size())
+                return;
+
+            titleBarInfo.rightButtons.get(action.index).subMenu.remove((int) action.subIndex);
         }
-        setRightButtons(pages.lastElement().titleBarInfo.rightButtons);
+        setRightButtons(titleBarInfo.rightButtons);
+    }
+
+    public void addRightButton(TitleBarInfo.RightButtonInfo info) {
+        if (info == null)
+            return;
+        TitleBarInfo titleBarInfo = pages.lastElement().titleBarInfo;
+        if (titleBarInfo.rightButtons == null)
+            titleBarInfo.rightButtons = new ArrayList<>();
+        titleBarInfo.rightButtons.add(info);
+        setRightButtons(titleBarInfo.rightButtons);
     }
 
     @Override

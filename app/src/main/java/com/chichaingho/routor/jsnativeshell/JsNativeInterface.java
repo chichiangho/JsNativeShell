@@ -218,4 +218,20 @@ public class JsNativeInterface {
             }
         });
     }
+
+    @JavascriptInterface
+    public void addRightButton(String infoStr) {
+        final BaseActionBarCordovaActivity activity = softActivity.get();
+        if (activity == null)
+            return;
+        final TitleBarInfo.RightButtonInfo info = gson.fromJson(infoStr, TitleBarInfo.RightButtonInfo.class);
+        if (info == null)
+            return;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.addRightButton(info);
+            }
+        });
+    }
 }

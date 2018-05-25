@@ -54,6 +54,9 @@ let jsNativeBridge = {
     setRightButtonByIndex(buttonInfo) {
         JsNativeInterface.setRightButtonByIndex(JSON.stringify(buttonInfo));
     },
+    addRightButton(buttonInfo) {
+        JsNativeInterface.addRightButton(JSON.stringify(buttonInfo));
+    },
     setSwipCloseAble(enable) {
         JsNativeInterface.setSwipeAble(enable);
     },
