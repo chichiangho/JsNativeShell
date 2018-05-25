@@ -75,7 +75,7 @@ public class JsNativeInterface {
                 } else {
                     Intent intent = new Intent(activity, SwipeCloseActionBarCordovaActivity.class);
                     intent.putExtra("url", info.url);
-                    intent.putExtra("titleBarInfo", info.titleInfo);
+                    intent.putExtra("titleBarInfo", JsNativeInterface.gson.toJson(info.titleInfo));
                     intent.putExtra("params", info.params);
                     activity.startActivityForResult(intent, 100);//以result传递返回参数
                 }
@@ -143,7 +143,7 @@ public class JsNativeInterface {
     }
 
     @JavascriptInterface
-    public void setOnBackListener(final String info) {
+    public void setOnResultListener(final String info) {
         if (info == null)
             return;
         final BaseActionBarCordovaActivity activity = softActivity.get();

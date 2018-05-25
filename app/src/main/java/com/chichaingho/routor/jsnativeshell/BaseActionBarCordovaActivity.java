@@ -105,7 +105,7 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         }
 
         loadUrl(new PageInfo(getIntent().getStringExtra("url"),
-                getIntent().getStringExtra("titleBarInfo"),
+                JsNativeInterface.gson.fromJson(getIntent().getStringExtra("titleBarInfo"), TitleBarInfo.class),
                 getIntent().getStringExtra("params")));
     }
 

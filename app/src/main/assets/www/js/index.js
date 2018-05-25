@@ -21,66 +21,106 @@ let app = {
     // Application Constructor
     initialize: function () {
 //        JsNativeInterface.setShowProgress(false);
-        jsNativeEvent.onLoadFinished(function (params) {
-             alert(params);
+        jsNativeBridge.onLoadFinished(function (params) {
+            // alert(params);
         });
-        jsNativeEvent.onHistoryBack(function (params) {
-            alert(params);
-        })
+        // jsNativeBridge.onResult(function (params) {
+        //     alert(params);
+        // })
     },
     startNext: function () {
-        JsNativeInterface.loadUrl("{url:\"file:///android_asset/www/index.html\",params:\"in params\",titleInfo:\"{title:\\\"Load In WebView\\\"}\",inCurPage:true}");
+        jsNativeBridge.loadUrl({
+            url: "file:///android_asset/www/index.html",
+            params: "in params",
+            titleInfo: {title: "Load In WebView"},
+            inCurPage: true
+        });
     },
     startNextOut: function () {
-        JsNativeInterface.loadUrl("{url:\"file:///android_asset/www/index.html\" ,params:\"out params\",titleInfo:\"{title:\\\"Load Out WebView\\\"}\"}");
+        jsNativeBridge.loadUrl({
+            url: "file:///android_asset/www/index.html",
+            params: "out params",
+            titleInfo: {title: "Load Out WebView"}
+        });
     },
     loadBaidu: function () {
-        JsNativeInterface.loadUrl("{url:\"http://www.baidu.com/?wd=\\\"121\\\"\",params:\"this is what I send to you!\",titleInfo:\"{title:\\\"Baidu\\\"}\"}");
+        jsNativeBridge.loadUrl({
+            url: "http://www.baidu.com/?wd=\"121\"",
+            params: "this is what I send to you!",
+            titleInfo: {title: "Baidu"}
+        });
     },
-    setOnBackListener() {
-        JsNativeInterface.setOnBackListener("{onResultCallback:\"alert();\"}");
+    setOnBackListener: function () {
+        jsNativeBridge.onResult(function (params) {
+            alert(params);
+        });
     },
     setOnTitle: function () {
-        JsNativeInterface.setTitleBar("{titleCallback:\"alert(\\\"titleClick\\\");\"}");
+        jsNativeBridge.onTitle(function (param) {
+            alert(param);
+        });
     },
     setSearchTitle: function () {
-        JsNativeInterface.setTitleBar("{titleCallback:\"alert();\",hideTitleAndStatus:false,titleType:\"search\",titlePosition:\"left\",leftText:\"hide\",leftIcon:\"hide\",titleColor:\"#ff0000\",titleBarColor:\"#770000\"}");
+        jsNativeBridge.showSearchTitle(function (param) {
+            alert(param);
+        });
     },
     setTitle: function () {
-        JsNativeInterface.setTitleBar("{rightButtons:[],titleType:\"normal\",hideTitleAndStatus:false,title:\"SetTitleSuccess\",titlePosition:\"left\",leftText:\"hide\",leftIcon:\"hide\",titleColor:\"#ff0000\",titleBarColor:\"#bbccff\"}");
+        jsNativeBridge.setTitleBar({
+            rightButtons: [],
+            titleType: "normal",
+            hideTitleAndStatus: false,
+            title: "SetTitleSuccess",
+            titlePosition: "left",
+            leftText: "hide",
+            leftIcon: "hide",
+            titleColor: "#ff0000",
+            titleBarColor: "#bbccff"
+        });
     },
     closeTitle: function () {
-        JsNativeInterface.setTitleBar("{titleSpinnerOpen:false}");
+        jsNativeBridge.setTitleBar({titleSpinnerOpen: false});
     },
     hideTitle: function () {
-        JsNativeInterface.setTitleBar("{hideTitleAndStatus:true}");
+        jsNativeBridge.setTitleBar({hideTitleAndStatus: true});
     },
     setOperator: function () {
-        JsNativeInterface.setTitleBar("{rightButtons:[{img:\"\",text:\"Set\",subMenu:[{text:\"111\",callback:\"alert(\\\"111\\\");\"},{text:\"222\",callback:\"alert(\\\"222\\\");\"}],callback:\"app.setTitle();\"},{img:\"\",text:\"Get\",subMenu:[{text:\"333\",callback:\"alert(\\\"333\\\");\"},{text:\"444\",callback:\"alert(\\\"444\\\");\"}]}]}");
+        jsNativeBridge.setTitleBar({
+            rightButtons: [{
+                img: "",
+                text: "Set",
+                subMenu: [{text: "111", callback: "alert(\"111\");"}, {text: "222", callback: "alert(\"222\");"}],
+                callback: "app.setTitle();"
+            }, {
+                img: "",
+                text: "Get",
+                subMenu: [{text: "333", callback: "alert(\"333\");"}, {text: "444", callback: "alert(\"444\");"}]
+            }]
+        });
     },
     setSwipeAble: function () {
-        JsNativeInterface.setSwipeAble(true);
+        jsNativeBridge.setSwipCloseAble(true);
     },
     setUnSwipeAble: function () {
-        JsNativeInterface.setSwipeAble(false);
+        jsNativeBridge.setSwipCloseAble(false);
     },
     goBack2: function () {
-        JsNativeInterface.backHistory("{backCount:2}");
+        jsNativeBridge.backHistory({backCount: 2});
     },
     goBack3: function () {
-        JsNativeInterface.backHistory("{backCount:3}");
+        jsNativeBridge.backHistory({backCount: 3});
     },
     remove0: function () {
-        JsNativeInterface.removeRightButtonByIndex("{index:0}");
+        jsNativeBridge.removeRightButtonByIndex({index: 0});
     },
     change0: function () {
-        JsNativeInterface.setRightButtonByIndex("{index:0,button:{text:\"change\"}}");
+        jsNativeBridge.setRightButtonByIndex({index: 0, button: {text: "change"}});
     },
     remove00: function () {
-        JsNativeInterface.removeRightButtonByIndex("{index:0,subIndex:0}");
+        jsNativeBridge.removeRightButtonByIndex({index: 0, subIndex: 0});
     },
     change00: function () {
-        JsNativeInterface.setRightButtonByIndex("{index:0,subIndex:0,button:{text:\"change\"}}");
+        jsNativeBridge.setRightButtonByIndex({index: 0, subIndex: 0, button: {text: "change"}});
     }
 };
 
