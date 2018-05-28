@@ -161,7 +161,6 @@ public class SwipeCloseActionBarCordovaActivity extends BaseActionBarCordovaActi
                     leftBg.pop();
                 } else {//finish activity
                     setedbg = false;
-                    SwipeCloseActionBarCordovaActivity.this.overridePendingTransition(0, R.anim.slide_out_right);
                 }
             }
 

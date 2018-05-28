@@ -124,7 +124,6 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         leftText = findViewById(R.id.left_text);
         leftIcon = findViewById(R.id.left_icon);
 
-        webView.clearCache(false);
         jsNativeInterface = new JsNativeInterface(this);
         webView.addJavascriptInterface(jsNativeInterface, "JsNativeInterface");
         webView.setUIClient(new XWalkUIClient(webView) {
@@ -717,21 +716,21 @@ public abstract class BaseActionBarCordovaActivity extends AppCompatActivity {
         setRightButtons(titleBarInfo.rightButtons);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (webView != null) {
-            webView.pauseTimers();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (webView != null) {
-            webView.resumeTimers();
-        }
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (webView != null) {
+//            webView.pauseTimers();
+//        }
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (webView != null) {
+//            webView.resumeTimers();
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
