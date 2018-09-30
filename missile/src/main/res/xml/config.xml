@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:android="http://schemas.android.com/apk/res/android">
+    <webview
+        name="SystemWebView"
+        value="com.missile.systemwebview.SystemWebView" />
+
+    <webview
+        name="XWalkWebView"
+        value="com.missile.systemwebview.XWalkWebView" />
+
+    <plugin
+        name="Missile"
+        value="com.missile.plugin.CoreAndroid" />
+</config>
