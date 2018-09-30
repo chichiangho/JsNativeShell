@@ -21,15 +21,15 @@ let app = {
     // Application Constructor
     initialize: function () {
 //        JsNativeInterface.setShowProgress(false);
-        jsNativeBridge.onLoadFinished(function (params) {
+        missile.onLoadFinished(function (params) {
             // alert(params);
         });
-        // jsNativeBridge.onResult(function (params) {
+        // missile.onResult(function (params) {
         //     alert(params);
         // })
     },
     startNext: function () {
-        jsNativeBridge.loadUrl({
+        missile.loadUrl({
             url: "file:///android_asset/www/index.html",
             params: "in params",
             titleInfo: {title: "Load In WebView"},
@@ -37,36 +37,36 @@ let app = {
         });
     },
     startNextOut: function () {
-        jsNativeBridge.loadUrl({
+        missile.loadUrl({
             url: "file:///android_asset/www/index.html",
             params: "out params",
             titleInfo: {title: "Load Out WebView"}
         });
     },
     loadBaidu: function () {
-        jsNativeBridge.loadUrl({
+        missile.loadUrl({
             url: "http://www.baidu.com/?wd=\"121\"",
             params: "this is what I send to you!",
             titleInfo: {title: "Baidu"}
         });
     },
     setOnBackListener: function () {
-        jsNativeBridge.onResult(function (params) {
+        missile.onResult(function (params) {
             alert(params);
         });
     },
     setOnTitle: function () {
-        jsNativeBridge.onTitle(function (param) {
+        missile.onTitle(function (param) {
             alert(param);
         });
     },
     setSearchTitle: function () {
-        jsNativeBridge.showSearchTitle(function (param) {
+        missile.showSearchTitle(function (param) {
             alert(param);
         });
     },
     setTitle: function () {
-        jsNativeBridge.setTitleBar({
+        missile.setTitleBar({
             rightButtons: [],
             titleType: "normal",
             hideTitleAndStatus: false,
@@ -79,13 +79,13 @@ let app = {
         });
     },
     closeTitle: function () {
-        jsNativeBridge.setTitleBar({titleSpinnerOpen: false});
+        missile.setTitleBar({titleSpinnerOpen: false});
     },
     hideTitle: function () {
-        jsNativeBridge.setTitleBar({hideTitleAndStatus: true});
+        missile.setTitleBar({hideTitleAndStatus: true});
     },
     setOperator: function () {
-        jsNativeBridge.setTitleBar({
+        missile.setTitleBar({
             rightButtons: [{
                 img: "",
                 text: "Set",
@@ -99,31 +99,31 @@ let app = {
         });
     },
     setSwipeAble: function () {
-        jsNativeBridge.setSwipCloseAble(true);
+        missile.setSwipeCloseAble(true);
     },
     setUnSwipeAble: function () {
-        jsNativeBridge.setSwipCloseAble(false);
+        missile.setSwipeCloseAble(false);
     },
     goBack2: function () {
-        jsNativeBridge.backHistory({backCount: 2});
+        missile.backHistory({backCount: 2});
     },
     goBack3: function () {
-        jsNativeBridge.backHistory({backCount: 3});
+        missile.backHistory({backCount: 3});
     },
     remove0: function () {
-        jsNativeBridge.removeRightButtonByIndex({index: 0});
+        missile.removeRightButtonByIndex({index: 0});
     },
     change0: function () {
-        jsNativeBridge.setRightButtonByIndex({index: 0, button: {text: "change"}});
+        missile.setRightButtonByIndex({index: 0, button: {text: "change"}});
     },
     remove00: function () {
-        jsNativeBridge.removeRightButtonByIndex({index: 0, subIndex: 0});
+        missile.removeRightButtonByIndex({index: 0, subIndex: 0});
     },
     change00: function () {
-        jsNativeBridge.setRightButtonByIndex({index: 0, subIndex: 0, button: {text: "change"}});
+        missile.setRightButtonByIndex({index: 0, subIndex: 0, button: {text: "change"}});
     },
     addOpe: function () {
-        jsNativeBridge.addRightButton({text: "added"});
+        missile.addRightButton({text: "added"});
     }
 };
 
