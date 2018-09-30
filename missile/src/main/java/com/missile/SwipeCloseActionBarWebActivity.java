@@ -29,7 +29,7 @@ import java.util.Stack;
  * 如需支持横屏，继承BaseActionBarCordovaActivity另起炉灶，不支持手势，专门处理横竖屏问题，
  * 或者在需要支持横屏的页面，在以loadUrl加载此页面时不以inCurPage的方式加载，且不以此方式离开此页面
  */
-public class SwipeCloseActionBarWebActivity extends BaseActionBarWebActivity {
+public abstract class SwipeCloseActionBarWebActivity extends BaseActionBarWebActivity {
 
     private RelativeLayout leftView;
     private Stack<Bitmap> leftBg = new Stack<>();

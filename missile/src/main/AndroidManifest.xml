@@ -11,7 +11,7 @@
 
     <application android:hardwareAccelerated="true">
         <activity
-            android:name=".SwipeCloseActionBarWebActivity"
+            android:name=".MissileActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SlideCloseTheme" />
     </application>
