@@ -9,6 +9,6 @@
         value="com.missile.systemwebview.XWalkWebView" />
 
     <plugin
-        name="Missile"
-        value="com.missile.plugin.CoreAndroid" />
+        name="TestPlugin"
+        value="com.missile.TestPlugin" />
 </config>

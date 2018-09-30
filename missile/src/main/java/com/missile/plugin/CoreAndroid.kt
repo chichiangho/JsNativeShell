@@ -2,11 +2,12 @@ package com.missile.plugin
 
 import android.content.Intent
 import com.missile.BaseActionBarWebActivity
+import com.missile.MissileActivity
 import com.missile.SwipeCloseActionBarWebActivity
 import com.missile.entity.*
 import com.missile.util.WebViewEngine
 
-class CoreAndroid internal constructor(activity: BaseActionBarWebActivity, engine: WebViewEngine) : MissilePlugin(activity, engine) {
+class CoreAndroid : MissilePlugin() {
 
     override fun execute(func: String, args: String, callback: MissilePlugin.MissileCallBack) {
         when (func) {
@@ -36,10 +37,10 @@ class CoreAndroid internal constructor(activity: BaseActionBarWebActivity, engin
                     return
                 }
         activity.runOnUiThread {
-            if (info.inCurPage) {
+            if (info.inCurPage || BaseActionBarWebActivity.webActivityCount > 5) {
                 activity.loadUrl(PageInfo(info.url, info.titleInfo, info.params))
             } else {
-                val intent = Intent(activity, SwipeCloseActionBarWebActivity::class.java)
+                val intent = Intent(activity, MissileActivity::class.java)
                 intent.putExtra("url", info.url)
                 intent.putExtra("titleBarInfo", gson.toJson(info.titleInfo))
                 intent.putExtra("params", info.params)

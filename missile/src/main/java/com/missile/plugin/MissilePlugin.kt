@@ -5,15 +5,20 @@ import com.missile.BaseActionBarWebActivity
 import com.missile.util.WebViewEngine
 import java.lang.ref.SoftReference
 
-abstract class MissilePlugin internal constructor(activity: BaseActionBarWebActivity, engine: WebViewEngine) {
-    private val softActivity: SoftReference<BaseActionBarWebActivity> = SoftReference(activity)
-    private val softEngine: SoftReference<WebViewEngine> = SoftReference(engine)
+abstract class MissilePlugin {
+    private lateinit var softActivity: SoftReference<BaseActionBarWebActivity>
+    private lateinit var softEngine: SoftReference<WebViewEngine>
 
     protected val activity: BaseActionBarWebActivity?
         get() = softActivity.get()
 
     protected val engine: WebViewEngine?
         get() = softEngine.get()
+
+    open fun init(activity: BaseActionBarWebActivity, engine: WebViewEngine) {
+        softActivity = SoftReference(activity)
+        softEngine = SoftReference(engine)
+    }
 
     abstract fun execute(func: String, args: String, callback: MissileCallBack)
 

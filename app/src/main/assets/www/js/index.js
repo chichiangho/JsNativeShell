@@ -28,6 +28,9 @@ let app = {
         //     alert(params);
         // })
     },
+    testPlugin(){
+        Missile.execute("TestPlugin","funss","varss");
+    },
     startNext: function () {
         missile.loadUrl({
             url: "file:///android_asset/www/index.html",

@@ -63,6 +63,7 @@ abstract class BaseActionBarWebActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base_actionbar)
+        webActivityCount++
         initViews()
         PluginManager.loadPlugins(this, webView)
 
@@ -618,6 +619,7 @@ abstract class BaseActionBarWebActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         webView.onDestroy()
+        webActivityCount--
     }
 
     fun setShowProgress(showProgress: Boolean) {
@@ -704,6 +706,7 @@ abstract class BaseActionBarWebActivity : AppCompatActivity() {
         private const val TYPE_SEARCH = "search"
         private const val TYPE_WITH_SPINNER = "spinner"
 
+        var webActivityCount = 0
         private val progressTimer = Timer()//使用一个静态的timer来处理进度条，因为并未持有引用，不会导致内存泄漏
     }
 }

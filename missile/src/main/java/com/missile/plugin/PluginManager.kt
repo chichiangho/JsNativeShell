@@ -3,6 +3,7 @@ package com.missile.plugin
 import com.missile.BaseActionBarWebActivity
 import com.missile.util.ConfigXmlParser
 import com.missile.util.WebViewEngine
+import java.lang.reflect.Method
 import java.util.*
 
 object PluginManager {
@@ -17,8 +18,9 @@ object PluginManager {
             val plugins = HashMap<String, MissilePlugin>()
             for ((key, value) in pluginNames!!) {
                 val clazz = Class.forName(value)
-                val c = clazz.getConstructor(BaseActionBarWebActivity::class.java, WebViewEngine::class.java)
-                val plugin = c.newInstance(activity, engine) as MissilePlugin
+                val func = clazz.getMethod("init", BaseActionBarWebActivity::class.java, WebViewEngine::class.java)
+                val plugin = clazz.newInstance() as MissilePlugin
+                func.invoke(plugin, activity, engine)
                 plugins[key] = plugin
             }
             return plugins

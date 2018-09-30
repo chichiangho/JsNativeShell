@@ -11,6 +11,7 @@
 
     <application
         android:label="Missile"
+        android:name="com.chichiangho.common.base.BaseApplication"
         android:theme="@style/BaseTheme">
         <activity
             android:name=".TestSwipeActivity"
